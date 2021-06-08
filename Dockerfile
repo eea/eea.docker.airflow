@@ -1,7 +1,8 @@
 FROM apache/airflow:2.0.2
 
-RUN pip install 'elasticsearch>=7.0.0,<8.0.0'
-RUN pip install eea.rabbitmq.client
+ADD ./requirements.txt /
+
+RUN pip install -r /requirements.txt
 
 ADD ./docker_start.sh /
 
