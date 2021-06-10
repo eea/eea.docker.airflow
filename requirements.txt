@@ -1,3 +1,4 @@
 elasticsearch>=7.0.0,<8.0.0
 eea.rabbitmq.client
 apache-airflow[sentry]
+ultimate-sitemap-parser
