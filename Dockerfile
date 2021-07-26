@@ -2,8 +2,6 @@ FROM apache/airflow:2.0.2
 
 ADD ./requirements.txt /
 
-RUN pip install -r /requirements.txt
-
 USER root
 RUN apt update && \
     apt install nodejs -y && \
@@ -12,6 +10,8 @@ RUN apt update && \
     mkdir /esbootstrap && \
     chmod 777 /esbootstrap
 USER airflow
+
+RUN pip install -r /requirements.txt
 
 RUN cd /esbootstrap && \
     git clone https://github.com/eea/eea.docker.esbootstrap.git && \
