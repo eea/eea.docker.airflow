@@ -3,3 +3,4 @@ eea.rabbitmq.client
 apache-airflow[sentry]
 ultimate-sitemap-parser
 git+https://github.com/eea/restapi_harvester.git
+farm-haystack
