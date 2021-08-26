@@ -9,6 +9,9 @@ then
     ln -s /custom_config/dags /opt/airflow
 fi
 
+if [[ -f /opt/airflow/airflow.cfg ]]
+then
 sed -i "s/sentry_on = false/sentry_on = true/g" /opt/airflow/airflow.cfg
+fi
 
-exec airflow /entrypoint $1 $2 $3
+gosu airflow /entrypoint $1 $2 $3
