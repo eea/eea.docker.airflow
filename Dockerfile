@@ -30,4 +30,6 @@ USER airflow
 
 ADD ./docker_start.sh /
 
+USER root
+
 ENTRYPOINT ["/usr/bin/dumb-init", "--", "/docker_start.sh"]

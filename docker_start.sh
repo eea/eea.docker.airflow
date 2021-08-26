@@ -1,5 +1,7 @@
 #!/bin/bash
 
+chown airflow:airflow /opt/airflow/logs
+
 if [[ -d "/custom_config" ]] && [[ "${DEV_ENV:-false}" != "true" ]]
 then
     echo "/custom_config exists on your filesystem."
@@ -8,4 +10,5 @@ then
 fi
 
 sed -i "s/sentry_on = false/sentry_on = true/g" /opt/airflow/airflow.cfg
-/entrypoint $1 $2 $3
+
+exec airflow /entrypoint $1 $2 $3
