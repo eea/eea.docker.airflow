@@ -1,3 +1,3 @@
-Customized Apache Airflow docker image
+# EEA-Crawler specific Apache Airflow docker image
 
 See https://github.com/eea/eea-crawler/ for DAG definitions.
