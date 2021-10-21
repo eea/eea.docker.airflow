@@ -7,6 +7,7 @@ RUN apt update && \
     apt install nodejs -y && \
     apt install npm -y && \
     apt install git -y && \
+    apt install libmagic1 -y && \
     mkdir /esbootstrap && \
     chmod 777 /esbootstrap
 USER airflow

@@ -5,3 +5,5 @@ ultimate-sitemap-parser
 git+https://github.com/eea/restapi_harvester.git
 farm-haystack
 unidecode
+trafilatura
+python-magic
