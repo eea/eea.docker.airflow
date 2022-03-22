@@ -1,4 +1,4 @@
-elasticsearch>=7.0.0,<8.0.0
+elasticsearch>=8.0.0,<9.0.0
 eea.rabbitmq.client
 apache-airflow[sentry]
 ultimate-sitemap-parser
@@ -7,3 +7,4 @@ farm-haystack
 unidecode
 trafilatura
 python-magic
+cssselect
