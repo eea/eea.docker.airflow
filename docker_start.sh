@@ -1,5 +1,7 @@
 #!/bin/bash
 
+chown airflow:airflow /opt/airflow/logs
+
 if [[ -d "/custom_config" ]] && [[ "${DEV_ENV:-false}" != "true" ]]
 then
     echo "/custom_config exists on your filesystem."
