@@ -1,9 +1,9 @@
-elasticsearch>=8.0.0,<9.0.0
+elasticsearch>=7.7,<=7.10
 eea.rabbitmq.client
 apache-airflow[sentry]
 ultimate-sitemap-parser
 git+https://github.com/eea/restapi_harvester.git
-farm-haystack
+farm-haystack==1.2.0
 unidecode
 trafilatura
 python-magic
