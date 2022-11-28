@@ -8,3 +8,4 @@ unidecode
 trafilatura
 python-magic
 cssselect
+rdflib
