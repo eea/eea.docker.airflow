@@ -83,11 +83,11 @@ app.post('/content', async (req, res) => {
     try {
         if (url) {
             console.log('open: ' + url)
-            const content = await ssr(url, js)
+            const {html, status} = await ssr(url, js)
             if (raw) {
-                res.send(content)
+                res.status(status).send(html)
             } else {
-                res.json(content)
+                res.status(status).json(html)
             }
         } else {
             res.status(400).send("missing input value")
@@ -95,7 +95,7 @@ app.post('/content', async (req, res) => {
     } catch (error) {
         console.error(error)
         res.status(500).send(error)
-    }  
+    }
 })
 
 app.post('/screenshot', async (req, res) => {
@@ -115,7 +115,7 @@ app.post('/screenshot', async (req, res) => {
         if (url) {
             console.log('open for screenshot: ' + url)
             const context = await browser.createIncognitoBrowserContext();
-            const page = await loadPage(context, url, js)
+            const { page } = await loadPage(context, url, js)
             await page.screenshot(screenshotData)
             page.close()
             context.close()
@@ -148,7 +148,7 @@ app.post('/pdf', async (req, res) => {
         if (url) {
             console.log('open for screenshot: ' + url)
             const context = await browser.createIncognitoBrowserContext();
-            const page = await loadPage(context, url, js)
+            const { page } = await loadPage(context, url, js)
             await page.pdf(pdfData)
             page.close()
             context.close()
@@ -175,6 +175,7 @@ function removeFile(filename) {
 
 async function loadPage(context, url, js = false) {
     const page = await context.newPage();
+    let status;
     await page.setUserAgent(userAgent);
 //    page.setExtraHTTPHeaders({
 //        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
@@ -182,19 +183,21 @@ async function loadPage(context, url, js = false) {
 //    });
     if (js) {
         page.setJavaScriptEnabled(true)
-        await page.goto(url, { waitUntil: 'networkidle0' });
-    } else { 
-        await page.goto(url);
+        const resp = await page.goto(url, { waitUntil: 'networkidle0' });
+        status = resp.status();
+    } else {
+        const resp = await page.goto(url);
+        status = resp.status();
     }
     console.log(await page.title())
-    return page
+    return {page:page, status:status}
 }
 
 async function ssr(url, js = false) {
-    const page = await loadPage(browser, url, js)
+    const { page, status } = await loadPage(browser, url, js)
     const html = await page.content(); // serialized HTML of page DOM.
     page.close()
-    return html;
+    return {html:html, status: status};
 }
 
 
