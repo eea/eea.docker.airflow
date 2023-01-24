@@ -3,7 +3,6 @@ eea.rabbitmq.client
 apache-airflow[sentry]
 ultimate-sitemap-parser
 git+https://github.com/eea/restapi_harvester.git
-farm-haystack==1.2.0
 unidecode
 trafilatura
 python-magic
