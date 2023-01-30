@@ -185,7 +185,7 @@ async function loadPage(context, url, js = false) {
     final_url = ""
     if (js) {
         page.setJavaScriptEnabled(true)
-        const resp = await page.goto(url, { waitUntil: 'networkidle0' });
+        const resp = await page.goto(url, { waitUntil: 'networkidle0' , timeout: 300000});
         status = resp.status();
         final_url = resp.url()
     } else {
