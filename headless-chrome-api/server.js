@@ -187,16 +187,16 @@ async function loadPage(context, url, js = false) {
         page.setJavaScriptEnabled(true)
         const resp = await page.goto(url, { waitUntil: 'networkidle0' , timeout: 300000});
         status = resp.status();
-        final_url = resp.url()
+        final_url = page.url()
     } else {
         const resp = await page.goto(url);
         status = resp.status();
         final_url = resp.url()
     }
-    console.log(await page.title())
-    console.log(status)
-    console.log(url)
-    console.log(final_url)
+    console.log(url, "title",  await page.title())
+    console.log(url, "status", status)
+    console.log(url, "url", url)
+    console.log(url, "final_url", final_url)
     return {page:page, status:status, final_url}
 }
 
