@@ -177,6 +177,7 @@ function removeFile(filename) {
 async function loadPage(context, url, js = false) {
     const page = await context.newPage();
     let status;
+    await page.setCacheEnabled(false);
     await page.setUserAgent(userAgent);
 //    page.setExtraHTTPHeaders({
 //        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
