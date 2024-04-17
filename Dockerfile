@@ -1,4 +1,4 @@
-FROM apache/airflow:2.4.1
+FROM apache/airflow:2.8.4
 
 ADD ./requirements.txt /
 ADD ./docker_start.sh /
@@ -6,7 +6,8 @@ ADD ./docker_start.sh /
 USER root
 RUN apt update && \
     apt install git -y && \
-    apt install libmagic1 -y
+    apt install libmagic1 -y && \
+    apt install gosu
 
 USER airflow
 

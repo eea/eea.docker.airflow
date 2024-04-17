@@ -17,4 +17,4 @@ then
   sed -i "s/scheduler_idle_sleep_time = 1/scheduler_idle_sleep_time = 0.1/g" /opt/airflow/airflow.cfg
 fi
 
-gosu airflow /entrypoint $1 $2 $3
+gosu airflow /entrypoint "${@}"

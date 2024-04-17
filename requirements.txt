@@ -1,8 +1,7 @@
-elasticsearch>=7.7,<=7.10
+elasticsearch>=7.7,<=7.10.1
 eea.rabbitmq.client
 apache-airflow[sentry]
 ultimate-sitemap-parser
-git+https://github.com/eea/restapi_harvester.git
 unidecode
 trafilatura
 python-magic
