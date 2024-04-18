@@ -1,4 +1,4 @@
-FROM apache/airflow:2.8.4
+FROM apache/airflow:2.9.0-python3.8
 
 ADD ./requirements.txt /
 ADD ./docker_start.sh /
