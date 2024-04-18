@@ -1,6 +1,6 @@
 #!/bin/bash
 
-chown airflow:airflow /opt/airflow/logs
+chown airflow /opt/airflow/logs
 
 if [[ -d "/custom_config" ]] && [[ "${DEV_ENV:-false}" != "true" ]]
 then
@@ -17,4 +17,4 @@ then
   sed -i "s/scheduler_idle_sleep_time = 1/scheduler_idle_sleep_time = 0.1/g" /opt/airflow/airflow.cfg
 fi
 
-exec /entrypoint "${@}"
+gosu airflow /entrypoint "${@}"
