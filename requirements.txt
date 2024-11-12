@@ -1,10 +1,10 @@
 elasticsearch>=7.7,<=7.10
-eea.rabbitmq.client
+eea.rabbitmq.client==1.9
 apache-airflow[sentry]
-ultimate-sitemap-parser
+ultimate-sitemap-parser==0.5
 git+https://github.com/eea/restapi_harvester.git
-unidecode
-trafilatura
-python-magic
-cssselect
-rdflib
+unidecode==1.3.6
+trafilatura==1.4.0
+python-magic==0.4.27
+cssselect==1.2.0
+rdflib==6.2.0
