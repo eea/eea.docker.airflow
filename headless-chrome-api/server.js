@@ -29,9 +29,14 @@ let browser
     browser = await puppeteer.launch({
         headless: "new",
         ignoreHTTPSErrors: true,
+        defaultViewport: {
+            width: 1280,
+            height: 10000,
+        },
         args: [
             "--no-sandbox",
             "--disable-gpu",
+            "--window-size=1280,10000",
         ]
     }); 
     fs.mkdir(screenshotDir, { recursive: true }, (err) => {
@@ -177,6 +182,10 @@ function removeFile(filename) {
 async function loadPage(context, url, js = false) {
     const page = await context.newPage();
     let status;
+    await page.setViewport({
+        width: page.viewport() ? page.viewport().width : 1280,
+        height: 10000,
+    });
     await page.setCacheEnabled(false);
     await page.setUserAgent(userAgent);
 //    page.setExtraHTTPHeaders({

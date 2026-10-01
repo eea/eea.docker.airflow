@@ -1,5 +1,6 @@
-headless-chrome:
-  build: .
-  ports:
-    - 3000:3000
+services:
+  headless-chrome:
+    build: .
+    ports:
+      - 3000:3000
 #  command: bash -c "tail -f /dev/null"
