@@ -29,14 +29,9 @@ let browser
     browser = await puppeteer.launch({
         headless: "new",
         ignoreHTTPSErrors: true,
-        defaultViewport: {
-            width: 1280,
-            height: 10000,
-        },
         args: [
             "--no-sandbox",
             "--disable-gpu",
-            "--window-size=1280,10000",
         ]
     }); 
     fs.mkdir(screenshotDir, { recursive: true }, (err) => {
@@ -52,6 +47,38 @@ let browser
 
 function relative(path) {
     return fp.join(__dirname, path);
+}
+
+function getViewport(req) {
+    if (!req) return null;
+    const body = req.body || {};
+    const query = req.query || {};
+
+    let vp = body.viewport || query.viewport;
+    if (typeof vp === 'string') {
+        try {
+            vp = JSON.parse(vp);
+        } catch (e) {
+            vp = null;
+        }
+    }
+
+    const width = body.width !== undefined ? body.width : (query.width !== undefined ? query.width : (body.viewport_width !== undefined ? body.viewport_width : (query.viewport_width !== undefined ? query.viewport_width : (vp && vp.width))));
+    const height = body.height !== undefined ? body.height : (query.height !== undefined ? query.height : (body.viewport_height !== undefined ? body.viewport_height : (query.viewport_height !== undefined ? query.viewport_height : (vp && vp.height))));
+
+    if (width !== undefined || height !== undefined || (vp && typeof vp === 'object')) {
+        const defaultWidth = 800;
+        const defaultHeight = 600;
+        const res = typeof vp === 'object' && vp ? { ...vp } : {};
+        if (width !== undefined) res.width = parseInt(width, 10);
+        else if (res.width === undefined) res.width = defaultWidth;
+
+        if (height !== undefined) res.height = parseInt(height, 10);
+        else if (res.height === undefined) res.height = defaultHeight;
+
+        return res;
+    }
+    return null;
 }
 
 app.use(express.json());
@@ -85,10 +112,11 @@ app.post('/content', async (req, res) => {
     const url = req.body.url;
     var raw = req.body.raw;
     const js = req.body.js;
+    const viewport = getViewport(req);
     try {
         if (url) {
             console.log('open: ' + url);
-            const {html, status, final_url} = await ssr(url, js);
+            const {html, status, final_url} = await ssr(url, js, viewport);
             res.set("final_url", final_url);
             if (raw) {
                 res.status(status).send(html);
@@ -107,6 +135,7 @@ app.post('/content', async (req, res) => {
 app.post('/screenshot', async (req, res) => {
     const url = req.body.url;
     const js = req.body.js;
+    const viewport = getViewport(req);
     let ext;
     if (req.body.ext) {
         ext = req.body.ext;
@@ -121,7 +150,7 @@ app.post('/screenshot', async (req, res) => {
         if (url) {
             console.log('open for screenshot: ' + url);
             const context = await browser.createIncognitoBrowserContext();
-            const { page } = await loadPage(context, url, js);
+            const { page } = await loadPage(context, url, js, viewport);
             await page.screenshot(screenshotData);
             page.close();
             context.close();
@@ -142,6 +171,7 @@ app.post('/screenshot', async (req, res) => {
 app.post('/pdf', async (req, res) => {
     const url = req.body.url;
     const js = req.body.js;
+    const viewport = getViewport(req);
     const date = Date.now();
     var landscape = req.body.landscape;
     
@@ -154,7 +184,7 @@ app.post('/pdf', async (req, res) => {
         if (url) {
             console.log('open for screenshot: ' + url);
             const context = await browser.createIncognitoBrowserContext();
-            const { page } = await loadPage(context, url, js);
+            const { page } = await loadPage(context, url, js, viewport);
             await page.pdf(pdfData);
             page.close();
             context.close();
@@ -179,13 +209,16 @@ function removeFile(filename) {
     });
 }
 
-async function loadPage(context, url, js = false) {
+async function loadPage(context, url, js = false, viewport = null) {
     const page = await context.newPage();
     let status;
-    await page.setViewport({
-        width: page.viewport() ? page.viewport().width : 1280,
-        height: 10000,
-    });
+    if (viewport) {
+        const currentVp = page.viewport() || { width: 800, height: 600 };
+        await page.setViewport({
+            ...currentVp,
+            ...viewport,
+        });
+    }
     await page.setCacheEnabled(false);
     await page.setUserAgent(userAgent);
 //    page.setExtraHTTPHeaders({
@@ -210,8 +243,8 @@ async function loadPage(context, url, js = false) {
     return {page:page, status:status, final_url}
 }
 
-async function ssr(url, js = false) {
-    const { page, status, final_url } = await loadPage(browser, url, js)
+async function ssr(url, js = false, viewport = null) {
+    const { page, status, final_url } = await loadPage(browser, url, js, viewport)
     const html = await page.content(); // serialized HTML of page DOM.
     page.close()
     return {html:html, status: status, final_url: final_url};
