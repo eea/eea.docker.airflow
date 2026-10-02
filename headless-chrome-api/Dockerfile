@@ -1,41 +1,33 @@
-FROM node:17-slim
+FROM node:20-slim
 
-RUN apt-get update && apt-get install -y \
-  libx11-xcb1 \
-  libxcb-dri3-0 \
-  libxtst6 \
-  libxss1 \
-  apt-utils \
-  apt-transport-https \
-  ca-certificates \
-  gnupg \
-  wget \ 
-  --no-install-recommends \
-  && wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | apt-key add - \
-  && echo "deb https://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list \
-  && apt-get update && apt-get install -y \
-  google-chrome-stable \
-  fontconfig \
-  fonts-ipafont-gothic \
-  fonts-wqy-zenhei \
-  fonts-thai-tlwg \
-  fonts-kacst \
-  fonts-symbola \
-  fonts-noto \
-  fonts-freefont-ttf \
-  --no-install-recommends \
-  && apt-get purge --auto-remove -y gnupg \
-  && rm -rf /var/lib/apt/lists/*
+# Install dependencies, fonts, dumb-init, and Google Chrome
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    wget \
+    ca-certificates \
+    fontconfig \
+    fonts-ipafont-gothic \
+    fonts-wqy-zenhei \
+    fonts-thai-tlwg \
+    fonts-kacst \
+    fonts-symbola \
+    fonts-noto \
+    fonts-freefont-ttf \
+    dumb-init \
+    && wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb \
+    && apt-get install -y --no-install-recommends ./google-chrome-stable_current_amd64.deb \
+    && rm -f ./google-chrome-stable_current_amd64.deb \
+    && rm -rf /var/lib/apt/lists/*
 
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
+    PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome-stable
 
-# It's a good idea to use dumb-init to help prevent zombie chrome processes.
-ADD https://github.com/Yelp/dumb-init/releases/download/v1.2.0/dumb-init_1.2.0_amd64 /usr/local/bin/dumb-init
-RUN chmod +x /usr/local/bin/dumb-init
+WORKDIR /app
+
+COPY package.json ./
+
+RUN yarn --production
 
 COPY . /app/
-WORKDIR app
-
-RUN yarn
 
 EXPOSE 3000
 
